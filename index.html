@@ -1,228 +1,423 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#fff1f7">
-<title>TikTok LIVE 9:16タイマー</title>
+<title>TikTok LIVE 画像拡大タイマー</title>
+
 <style>
-*{box-sizing:border-box}
-:root{--pink:#e91e63;--blue:#1675e8;--ink:#19233b;--line:#f1d8e4}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#fff1f7;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif}
-#screen{width:100vw;height:100dvh;max-width:56.25dvh;max-height:177.7778vw;margin:auto;overflow:hidden;display:flex;flex-direction:column;gap:4px;padding:5px;background:#fff8fb}
-header{flex:0 0 auto;text-align:center;background:linear-gradient(135deg,#ff4f9a,#ff8cbd);color:white;border-radius:10px;padding:5px 4px}
-h1{font-size:clamp(13px,4vw,20px);line-height:1.15;margin:0;font-weight:950}
-header p{font-size:clamp(9px,2.5vw,12px);margin:2px 0 0;font-weight:800}
-.timer{flex:0 0 auto;background:#fff;border:1.5px solid #ffadd0;border-radius:11px;padding:5px;text-align:center}
-#clock{font-size:clamp(31px,10vw,50px);line-height:1.03;font-weight:950;font-variant-numeric:tabular-nums;color:#d81b60}
-#clock.negative{color:var(--blue)}
-.state{font-size:9px;font-weight:800;min-height:11px;margin:1px 0 3px}
-button{border:0;border-radius:6px;padding:5px 3px;font-size:clamp(9px,2.5vw,12px);font-weight:850;cursor:pointer;touch-action:manipulation;min-height:25px}
-button:active{transform:scale(.98)}
-.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
-.adjust{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;margin-top:4px}
-.pink{background:#ffe0ed;color:#9f174d}
-.pinkStrong{background:#e91e63;color:white}
-.blue{background:#dceeff;color:#1056b1}
-.neutral{background:#eef0f5;color:#243047}
-.adjust button{min-height:24px;padding:3px 1px}
-.imagePanel{flex:1 1 auto;min-height:0;background:#fff;border:1px solid var(--line);border-radius:9px;padding:5px;display:flex;flex-direction:column;gap:4px;overflow:hidden}
-.imageTools{display:flex;align-items:center;gap:5px;flex:0 0 auto}
-.imageTools label{display:block;text-align:center;background:#eef0f5;color:#243047;border-radius:6px;padding:6px 8px;font-size:11px;font-weight:850;cursor:pointer;flex:1}
-#imageInput{display:none}
-#imageName{font-size:9px;color:#657085;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:42%}
-#mainImage{width:100%;height:100%;min-height:0;object-fit:contain;border-radius:5px;background:#f7f7fa}
-.imageStage{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#f7f7fa;border-radius:5px}
-#imagePlaceholder{text-align:center;padding:12px;color:#7a8292;font-size:12px;font-weight:750;line-height:1.5}
-.goalsPanel{flex:0 0 auto;background:#fff;border:1px solid var(--line);border-radius:9px;padding:4px}
-.goalsPanel h2{font-size:11px;margin:0 0 3px}
-.goals{display:grid;grid-template-columns:repeat(4,1fr);gap:3px}
-.goal{border:1px solid #f1d8e4;border-radius:5px;padding:3px;text-align:center;min-width:0}
-.goalName{font-size:8px;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.count{font-size:10px;font-weight:900;color:#d81b60}
-.goalActions{display:flex;gap:2px;margin-top:2px}
-.goalActions button{flex:1;min-width:0;min-height:19px;padding:1px;font-size:9px}
-.bar{height:3px;background:#f4e5ec;border-radius:9px;margin-top:2px;overflow:hidden}
-.bar div{height:100%;width:0;background:#ff4f9a}
-.note{font-size:8px;text-align:center;color:#657085;line-height:1.2;flex:0 0 auto}
-@media (min-width:600px){#screen{height:min(100dvh,177.7778vw);width:min(100vw,56.25dvh)}}
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #fff8fb;
+  color: #19233b;
+}
+
+#screen {
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  max-width: 56.25dvh;
+  margin: 0 auto;
+  padding: 3px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  overflow: hidden;
+}
+
+/* タイトル */
+header {
+  flex: 0 0 auto;
+  text-align: center;
+  background: linear-gradient(135deg, #ff4f9a, #ff8cbd);
+  color: white;
+  border-radius: 6px;
+  padding: 3px;
+}
+
+h1 {
+  font-size: 13px;
+  margin: 0;
+  font-weight: 900;
+  line-height: 1.2;
+}
+
+header p {
+  font-size: 9px;
+  margin: 1px 0 0;
+}
+
+/* コンパクトなタイマー */
+.timer {
+  flex: 0 0 auto;
+  background: white;
+  border: 1px solid #ffadd0;
+  border-radius: 7px;
+  padding: 3px;
+  text-align: center;
+}
+
+#clock {
+  font-size: 27px;
+  line-height: 1;
+  font-weight: 950;
+  font-variant-numeric: tabular-nums;
+  color: #d81b60;
+}
+
+.state {
+  font-size: 8px;
+  font-weight: bold;
+  min-height: 9px;
+  margin: 1px 0;
+}
+
+button {
+  border: 0;
+  border-radius: 5px;
+  padding: 3px 2px;
+  font-size: 10px;
+  font-weight: 850;
+  min-height: 21px;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+button:active {
+  opacity: 0.75;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3px;
+}
+
+.adjust {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  margin-top: 2px;
+}
+
+.adjust button {
+  min-height: 19px;
+  padding: 2px 0;
+}
+
+.pink {
+  background: #ffe0ed;
+  color: #9f174d;
+}
+
+.pinkStrong {
+  background: #e91e63;
+  color: white;
+}
+
+.blue {
+  background: #dceeff;
+  color: #1056b1;
+}
+
+.neutral {
+  background: #eef0f5;
+  color: #243047;
+}
+
+/* 残りの画面を画像表示に使う */
+.imagePanel {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border: 1px solid #f1d8e4;
+  border-radius: 7px;
+  padding: 3px;
+  gap: 3px;
+  overflow: hidden;
+}
+
+/* 画像操作ボタン */
+.imageTools {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.imageTools label {
+  flex: 1;
+  text-align: center;
+  background: #ffe0ed;
+  color: #9f174d;
+  border-radius: 5px;
+  padding: 5px 3px;
+  font-size: 11px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+#imageInput {
+  display: none;
+}
+
+#imageName {
+  max-width: 30%;
+  font-size: 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* 大きな画像エリア */
+.imageStage {
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #f7f7fa;
+  border-radius: 4px;
+}
+
+#mainImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+#imagePlaceholder {
+  text-align: center;
+  padding: 10px;
+  color: #7a8292;
+  font-size: 12px;
+  line-height: 1.7;
+  font-weight: bold;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+@media (min-width: 600px) {
+  #screen {
+    width: min(100vw, 56.25dvh);
+  }
+}
 </style>
 </head>
+
 <body>
 <main id="screen">
 
-<header>
-  <h1>配信時間はリスナーさん次第！？</h1>
-  <p>ハートミーで参加してね ♡</p>
-</header>
+  <header>
+    <h1>配信時間はリスナーさん次第！？</h1>
+    <p>ハートミーで参加してね ♡</p>
+  </header>
 
-<section class="timer">
-  <div id="clock">30:00</div>
-  <div class="state" id="state">スタート前</div>
+  <!-- タイマー -->
+  <section class="timer">
+    <div id="clock">30:00</div>
+    <div class="state" id="state">スタート前</div>
 
-  <div class="controls">
-    <button class="pinkStrong" id="start">▶ スタート</button>
-    <button class="neutral" id="pause">⏸ 一時停止</button>
-    <button class="neutral" id="reset">↺ リセット</button>
-  </div>
-
-  <div class="adjust">
-    <button class="pink" data-seconds="5">＋5秒</button>
-    <button class="pink" data-seconds="60">＋1分</button>
-    <button class="pink" data-seconds="600">＋10分</button>
-    <button class="pink" data-seconds="3600">＋1時間</button>
-    <button class="blue" data-seconds="-5">−5秒</button>
-    <button class="blue" data-seconds="-60">−1分</button>
-    <button class="blue" data-seconds="-600">−10分</button>
-    <button class="blue" data-seconds="-3600">−1時間</button>
-  </div>
-</section>
-
-<!-- 画像を1枚、大きく表示 -->
-<section class="imagePanel">
-  <div class="imageTools">
-    <label for="imageInput">🖼️ 画像を選ぶ</label>
-    <input id="imageInput" type="file" accept="image/*">
-    <button class="neutral" id="clearImage" type="button">画像を消す</button>
-    <span id="imageName">画像未選択</span>
-  </div>
-
-  <div class="imageStage">
-    <div id="imagePlaceholder">
-      ここに画像を大きく表示<br>
-      「画像を選ぶ」から1枚選択
+    <div class="controls">
+      <button class="pinkStrong" id="start">▶ スタート</button>
+      <button class="neutral" id="pause">⏸ 一時停止</button>
+      <button class="neutral" id="reset">↺ リセット</button>
     </div>
-    <img id="mainImage" alt="選択した画像" hidden>
-  </div>
-</section>
 
-<!-- ギフト目標カウンター -->
-<section class="goalsPanel">
-  <h2>🎁 ギフト目標カウンター</h2>
-  <div class="goals" id="goals"></div>
-</section>
+    <div class="adjust">
+      <button class="pink" data-seconds="5">＋5秒</button>
+      <button class="pink" data-seconds="60">＋1分</button>
+      <button class="pink" data-seconds="600">＋10分</button>
+      <button class="pink" data-seconds="3600">＋1時間</button>
 
-<div class="note">
-  画像は1枚を大きく表示。0秒で自動停止。ギフト数は手動で記録します。
-</div>
+      <button class="blue" data-seconds="-5">−5秒</button>
+      <button class="blue" data-seconds="-60">−1分</button>
+      <button class="blue" data-seconds="-600">−10分</button>
+      <button class="blue" data-seconds="-3600">−1時間</button>
+    </div>
+  </section>
+
+  <!-- 画像を1枚だけ大きく表示 -->
+  <section class="imagePanel">
+
+    <div class="imageTools">
+      <label for="imageInput">🖼️ 画像を選ぶ</label>
+      <input type="file" id="imageInput" accept="image/*">
+      <button class="neutral" id="clearImage" type="button">
+        画像を消す
+      </button>
+      <span id="imageName">未選択</span>
+    </div>
+
+    <div class="imageStage">
+      <div id="imagePlaceholder">
+        ここに画像を大きく表示<br>
+        「画像を選ぶ」から1枚選んでね
+      </div>
+
+      <img id="mainImage" alt="選択した画像" hidden>
+    </div>
+
+  </section>
 
 </main>
 
 <script>
-// ギフト目標
-const goals = [
-  ["ドーナツ",50],
-  ["ハートポーズ",30],
-  ["コーギー",5],
-  ["マネーガン",3],
-  ["天才",30],
-  ["歌うきのこ",30],
-  ["進撃グローブ",5],
-  ["星まつり",3]
-];
-
-// タイマー設定（初期30分）
-let remaining = 1800;
-let initial = 1800;
+/* タイマー設定：初期30分 */
+const initial = 1800;
+let remaining = initial;
 let running = false;
 let endAt = 0;
 let ticker = null;
 
 const $ = id => document.getElementById(id);
 
-function fmt(s) {
-  s = Math.max(0, Math.floor(s));
-  let h = Math.floor(s / 3600);
-  let m = Math.floor((s % 3600) / 60);
-  let sec = s % 60;
+/* 時間表示 */
+function formatTime(seconds) {
+  seconds = Math.max(0, Math.floor(seconds));
 
-  return h
-    ? `${h}:${String(m).padStart(2,"0")}:${String(sec).padStart(2,"0")}`
-    : `${String(m).padStart(2,"0")}:${String(sec).padStart(2,"0")}`;
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  if (hours > 0) {
+    return `${hours}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  }
+
+  return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 }
 
-function render() {
-  $("clock").textContent = fmt(remaining);
-  $("clock").classList.toggle("negative", remaining <= 60);
+function renderTimer() {
+  $("clock").textContent = formatTime(remaining);
 }
 
-function stop() {
+/* タイマー停止 */
+function stopTimer() {
   running = false;
-  if (ticker) {
+
+  if (ticker !== null) {
     clearInterval(ticker);
     ticker = null;
   }
 }
 
+/* カウントダウン更新 */
 function tick() {
   if (!running) return;
 
-  remaining = Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
-  render();
+  remaining = Math.max(
+    0,
+    Math.ceil((endAt - Date.now()) / 1000)
+  );
+
+  renderTimer();
 
   if (remaining <= 0) {
-    stop();
+    stopTimer();
     $("state").textContent = "⏰ 0秒！終了";
   }
 }
 
-function adjust(n) {
+/* 時間の増減 */
+function adjustTime(amount) {
   if (running) {
-    remaining = Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
+    remaining = Math.max(
+      0,
+      Math.ceil((endAt - Date.now()) / 1000)
+    );
   }
 
-  remaining = Math.max(0, remaining + n);
+  remaining = Math.max(0, remaining + amount);
 
   if (running) {
     endAt = Date.now() + remaining * 1000;
-    if (remaining === 0) stop();
+
+    if (remaining === 0) {
+      stopTimer();
+    }
   }
 
-  render();
+  renderTimer();
+
   $("state").textContent =
-    remaining === 0 ? "⏰ 0秒！終了" : "時間を調整しました";
+    remaining === 0
+      ? "⏰ 0秒！終了"
+      : "時間を調整しました";
 }
 
-$("start").onclick = () => {
+/* 時間調整ボタン */
+document.querySelectorAll("[data-seconds]").forEach(button => {
+  button.addEventListener("click", () => {
+    adjustTime(Number(button.dataset.seconds));
+  });
+});
+
+/* スタート */
+$("start").addEventListener("click", () => {
   if (remaining <= 0) {
     $("state").textContent = "時間を追加してね";
     return;
   }
+
   if (running) return;
 
   running = true;
   endAt = Date.now() + remaining * 1000;
+
   $("state").textContent = "カウントダウン中";
   ticker = setInterval(tick, 200);
-};
-
-$("pause").onclick = () => {
-  if (running) {
-    remaining = Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
-    stop();
-    render();
-  }
-  $("state").textContent = "一時停止中";
-};
-
-$("reset").onclick = () => {
-  stop();
-  remaining = initial;
-  render();
-  $("state").textContent = "リセットしました";
-};
-
-document.querySelectorAll("[data-seconds]").forEach(button => {
-  button.onclick = () => adjust(Number(button.dataset.seconds));
 });
 
-// 画像選択
+/* 一時停止 */
+$("pause").addEventListener("click", () => {
+  if (running) {
+    remaining = Math.max(
+      0,
+      Math.ceil((endAt - Date.now()) / 1000)
+    );
+
+    stopTimer();
+    renderTimer();
+  }
+
+  $("state").textContent =
+    remaining === 0
+      ? "⏰ 0秒！終了"
+      : "一時停止中";
+});
+
+/* リセット */
+$("reset").addEventListener("click", () => {
+  stopTimer();
+  remaining = initial;
+  renderTimer();
+  $("state").textContent = "リセットしました";
+});
+
+/* 画像選択 */
 const imageInput = $("imageInput");
 const mainImage = $("mainImage");
 const placeholder = $("imagePlaceholder");
 
 imageInput.addEventListener("change", () => {
   const file = imageInput.files && imageInput.files[0];
+
   if (!file) return;
 
   if (!file.type.startsWith("image/")) {
@@ -236,81 +431,52 @@ imageInput.addEventListener("change", () => {
     mainImage.src = reader.result;
     mainImage.hidden = false;
     placeholder.hidden = true;
+
     $("imageName").textContent = file.name;
 
+    /* 画像をブラウザ内に保存 */
     try {
-      localStorage.setItem("tiktokTimerImage", reader.result);
-      localStorage.setItem("tiktokTimerImageName", file.name);
-    } catch (e) {
-      // 大きな画像は保存できない場合があります
+      localStorage.setItem("timerImage", reader.result);
+      localStorage.setItem("timerImageName", file.name);
+    } catch (error) {
+      /* 大きな画像は保存できない場合があります */
     }
   };
 
   reader.readAsDataURL(file);
 });
 
-// 画像を消す
-$("clearImage").onclick = () => {
+/* 画像を消す */
+$("clearImage").addEventListener("click", () => {
   mainImage.removeAttribute("src");
   mainImage.hidden = true;
   placeholder.hidden = false;
   imageInput.value = "";
-  $("imageName").textContent = "画像未選択";
+
+  $("imageName").textContent = "未選択";
 
   try {
-    localStorage.removeItem("tiktokTimerImage");
-    localStorage.removeItem("tiktokTimerImageName");
-  } catch (e) {}
-};
+    localStorage.removeItem("timerImage");
+    localStorage.removeItem("timerImageName");
+  } catch (error) {}
+});
 
-// 保存済み画像を復元
+/* 保存済み画像を復元 */
 try {
-  const saved = localStorage.getItem("tiktokTimerImage");
+  const savedImage = localStorage.getItem("timerImage");
 
-  if (saved) {
-    mainImage.src = saved;
+  if (savedImage) {
+    mainImage.src = savedImage;
     mainImage.hidden = false;
     placeholder.hidden = true;
+
     $("imageName").textContent =
-      localStorage.getItem("tiktokTimerImageName") || "保存済み画像";
+      localStorage.getItem("timerImageName") || "保存済み画像";
   }
-} catch (e) {}
+} catch (error) {}
 
-// ギフトカウンター作成
-const counts = goals.map(() => 0);
-
-goals.forEach(([name,target],i) => {
-  const d = document.createElement("div");
-  d.className = "goal";
-
-  d.innerHTML = `
-    <div class="goalName">${name}</div>
-    <div class="count" id="c${i}">0/${target}</div>
-    <div class="goalActions">
-      <button class="pink" data-i="${i}" data-d="-1">−</button>
-      <button class="pinkStrong" data-i="${i}" data-d="1">＋</button>
-    </div>
-    <div class="bar"><div id="b${i}"></div></div>
-  `;
-
-  $("goals").appendChild(d);
-});
-
-// ギフト数を増減
-document.querySelectorAll("[data-i]").forEach(button => {
-  button.onclick = () => {
-    const i = Number(button.dataset.i);
-    const target = goals[i][1];
-    const delta = Number(button.dataset.d);
-
-    counts[i] = Math.max(0, Math.min(target, counts[i] + delta));
-
-    $("c" + i).textContent = counts[i] + "/" + target;
-    $("b" + i).style.width = (counts[i] / target * 100) + "%";
-  };
-});
-
-render();
+renderTimer();
 </script>
+
 </body>
 </html>
